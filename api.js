@@ -145,9 +145,9 @@ api.public.register = _.post('register', async (ctx) => {
 
 });
 
-api.public.account = _.get('account/:hubId/:accountId', async (ctx, hubId, accountId) => { 
-  
-  const account = await hub.getAccount(hubId, accountId);
+api.public.account = _.get('/account/:hubId/:accountId', async (ctx, hubId, accountId) => { 
+
+  const account = await hub.getAccount(parseInt(hubId), parseInt(accountId));
   
   if (!account) {
     ctx.body = 'Not found.';
@@ -158,7 +158,10 @@ api.public.account = _.get('account/:hubId/:accountId', async (ctx, hubId, accou
 
 });
 
-api.public.deposit = _.get('deposit/:hubId/:accountId', async (ctx, hubId, accountId) => {
+api.public.deposit = _.get('/deposit/:hubId/:accountId', async (ctx, hubId, accountId) => {
+
+  hubId = parseInt(hubId);
+  accountId = parseInt(accountId);
 
   const account = await hub.getAccount(hubId, accountId);
   
@@ -182,9 +185,9 @@ api.public.deposit = _.get('deposit/:hubId/:accountId', async (ctx, hubId, accou
 
 });
 
-api.public.balanceOnTangle = _.get('balance/:hubId/:accountId', async (ctx, hubId, accountId) => {
+api.public.balanceOnTangle = _.get('/balance/:hubId/:accountId', async (ctx, hubId, accountId) => {
 
-  const balance = await hub.getBalanceOnTangle(hubId, accountId);
+  const balance = await hub.getBalanceOnTangle(parseInt(hubId), parseInt(accountId));
 
   if (!balance) {
     ctx.body = 'Not Found';
@@ -195,7 +198,7 @@ api.public.balanceOnTangle = _.get('balance/:hubId/:accountId', async (ctx, hubI
 
 });
 
-api.public.credit = _.get('credit/:hubId/:accountId', async (ctx, hubId, accountId) => {
+api.public.credit = _.get('/credit/:hubId/:accountId', async (ctx, hubId, accountId) => {
 
   const credit = await hub.getCredit(parseInt(hubId), parseInt(accountId));
 
@@ -208,7 +211,11 @@ api.public.credit = _.get('credit/:hubId/:accountId', async (ctx, hubId, account
 
 });
 
-api.public.withdraw = _.post('withdraw/:hubId/:accountId/:value/:address', async (ctx, hubId, accountId, value, address) => {
+api.public.withdraw = _.post('/withdraw/:hubId/:accountId/:value/:address', async (ctx, hubId, accountId, value, address) => {
+
+  hubId = parseInt(hubId);
+  accountId = parseInt(accountId);
+  value = parseInt(value);
 
   if (!('password' in ctx.body)) {
     ctx.body = 'Provide your password!'; 
@@ -220,11 +227,11 @@ api.public.withdraw = _.post('withdraw/:hubId/:accountId/:value/:address', async
     return;
   }
  
-  if(!Number.isInteger(parseInt(value))) {
+  if(!Number.isInteger(value)) {
     ctx.body = 'Value must be an integer';
   }
 
-  const account = await hub.getAccount(parseInt(hubId), parseInt(accountId));
+  const account = await hub.getAccount(hubId, accountId);
   
   if (!account) {
     ctx.body = 'Account not found!';
@@ -238,11 +245,11 @@ api.public.withdraw = _.post('withdraw/:hubId/:accountId/:value/:address', async
   
   const options = {
     'address': address,
-    'value': parseInt(value),
+    'value': value,
     'checkAddress': false
   };
 
-  const withdrawal = await hub.withdraw(parseInt(hubId), parseInt(accountId), options);
+  const withdrawal = await hub.withdraw(hubId, accountId, options);
   
   if (withdrawal) {
     ctx.body = `Tx: ${withdrawal.hash}`;
@@ -253,14 +260,16 @@ api.public.withdraw = _.post('withdraw/:hubId/:accountId/:value/:address', async
 
 });
 
-api.restricted.credit = _.post('admin/credit/:hubId/:accountId/:value', async (ctx, hubId, accountId, value) => {
+api.restricted.credit = _.post('/admin/credit/:hubId/:accountId/:value', async (ctx, hubId, accountId, value) => {
 
-  if (!Number.isInteger(parseInt(value))) {
+  value = parseInt(value);
+
+  if (!Number.isInteger(value)) {
     ctx.body = 'Invalid value';
     return;
   }
 
-  const credit = await hub.credit(hubId, accountId, parseInt(value));
+  const credit = await hub.credit(parseInt(hubId), parseInt(accountId), value);
 
 });
 

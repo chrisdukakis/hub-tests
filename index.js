@@ -14,6 +14,7 @@ app.use(json());
 
 app.use(async (ctx, next) => {
   ctx.body = ctx.request.body;
+  await next();
 });
 
 populate(public);
@@ -21,7 +22,7 @@ populate(public);
 app.use(async (ctx, next) => {
 
   const {secret} = ctx.body;
-  
+
   if (secret === 'top') {
     await next();
   }
@@ -31,15 +32,15 @@ app.use(async (ctx, next) => {
 
 });
 
-populate(restricted);
-
+populate(restricted); 
+  
 app.listen(3000);
-
 console.log('Listening on port 3000');
 
 function populate(api) {
   for (const route of Object.keys(api)) {
     app.use(api[route]);
   }
+  return Promise.resolve();
 }
 
