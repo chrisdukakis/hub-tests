@@ -134,7 +134,7 @@ api.public.register = _.post('register', async (ctx) => {
 
   const hubId = await getHub();
 
-  const register = await hub.registerAccount(hubId, secret);
+  const register = await hub.registerAccount(hubId, password);
 
   if (register) {
     ctx.body = account;
