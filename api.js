@@ -123,7 +123,7 @@ api.public.home = _.get('', (ctx) => {
   ctx.body = 'Hub';
 });
 
-api.public.register = _.post('register', async (ctx) => {
+api.public.register = _.post('/register', async (ctx) => {
 
   const {password} = ctx.body;
 
