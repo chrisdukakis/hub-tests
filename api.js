@@ -137,7 +137,8 @@ api.public.register = _.post('/register', async (ctx) => {
   const register = await hub.registerAccount(hubId, password);
 
   if (register) {
-    ctx.body = account;
+    io.emit('register', {'data': register, 't': Date.now()});
+    ctx.body = register;
   }
   else {
     ctx.body = 'Registration failed :(';
@@ -153,6 +154,7 @@ api.public.account = _.get('/account/:hubId/:accountId', async (ctx, hubId, acco
     ctx.body = 'Not found.';
   }
   else {
+    account.name = '';
     ctx.body = account;
   }
 
